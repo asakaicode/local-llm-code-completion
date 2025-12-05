@@ -1,71 +1,107 @@
-# local-llm-code-completion README
+# Local LLM Code Completion
 
-This is the README for your extension "local-llm-code-completion". After writing up a brief description, we recommend including the following sections.
+Ollama を使用してローカルLLMでAI支援コード補完を提供するVS Code拡張機能です。
 
-## Features
+## 機能
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **インラインコード補完**: タイピング中にリアルタイムでコード提案を表示
+- **ローカル実行**: Ollamaを使用して完全にローカルマシン上で動作
+- **カスタマイズ可能**: モデル、APIエンドポイント、生成パラメータを設定可能
+- **プライバシー重視**: コードが外部に送信されることはありません
 
-For example if there is an image subfolder under your extension project workspace:
+## 必要な環境
 
-\!\[feature X\]\(images/feature-x.png\)
+この拡張機能を使用する前に、Ollamaをインストールして起動する必要があります：
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+1. **Ollamaのインストール**: [ollama.ai](https://ollama.ai) からダウンロードしてインストール
 
-## Requirements
+2. **モデルのダウンロード**: コード補完用のモデルを取得
+   ```bash
+   ollama pull llama3.2:1b
+   ```
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+3. **Ollamaサーバーの起動**: Ollamaが実行されていることを確認
+   ```bash
+   ollama serve
+   ```
 
-## Extension Settings
+## ローカルでの試し方
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+この拡張機能をローカル環境で試すには：
 
-For example:
+1. **リポジトリのクローン**
+   ```bash
+   git clone <repository-url>
+   cd local-llm-code-completion
+   ```
 
-This extension contributes the following settings:
+2. **依存関係のインストール**
+   ```bash
+   pnpm install
+   # または
+   npm install
+   ```
 
-- `myExtension.enable`: Enable/disable this extension.
-- `myExtension.thing`: Set to `blah` to do something.
+3. **Ollamaの起動**（まだ起動していない場合）
+   ```bash
+   ollama serve
+   ```
 
-## Known Issues
+4. **VS Codeで開く**
+   ```bash
+   code .
+   ```
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+5. **拡張機能の実行**
+   - `F5` キーを押すと、拡張機能が読み込まれた新しいVS Codeウィンドウが開きます
+   - 拡張機能は起動時に自動的にアクティベートされます
 
-## Release Notes
+6. **補完のテスト**
+   - 任意のコードファイル（TypeScript、JavaScript、Pythonなど）を開きます
+   - コードを入力して約300ms待ちます
+   - インライン補完の提案が表示されます
 
-Users appreciate release notes as you update your extension.
+## 拡張機能の設定
 
-### 1.0.0
+この拡張機能は以下の設定項目を提供します：
 
-Initial release of ...
+- `localLlmCodeCompletion.apiUrl`: Ollama APIエンドポイント
+  - デフォルト: `http://localhost:11434/v1/chat/completions`
+- `localLlmCodeCompletion.model`: 補完に使用するモデル名
+  - デフォルト: `llama3.2:1b`
+- `localLlmCodeCompletion.maxTokens`: 補完の最大トークン数
+  - デフォルト: `96`
+- `localLlmCodeCompletion.temperature`: サンプリング温度（0 = 確定的）
+  - デフォルト: `0.2`
 
-### 1.0.1
+## 動作の仕組み
 
-Fixed issue #.
+1. 拡張機能がカーソル位置を監視し、周辺のコードコンテキストを取得
+2. タイピングが停止すると、Fill-in-the-Middle (FIM) 形式のプロンプトをOllamaに送信
+3. LLMがprefixとsuffixのコンテキストに基づいて補完を生成
+4. 提案がインラインコンプリーションテキストとして表示（GitHub Copilot風）
+5. `Tab` キーで提案を受け入れ、または入力を続けて無視
 
-### 1.1.0
+## 開発用スクリプト
 
-Added features X, Y, and Z.
+- `pnpm run compile`: 拡張機能のビルド
+- `pnpm run watch`: 開発用ウォッチモード
+- `pnpm run lint`: ESLintの実行
+- `pnpm run format`: Prettierでコードフォーマット
+- `pnpm run test`: テストの実行
 
----
+## 既知の問題
 
-## Following extension guidelines
+- 補完の品質は使用するモデルに依存します
+- より大きなモデルはより良い結果を提供しますが、遅くなる可能性があります
+- 過剰なAPI呼び出しを避けるため、300msのデバウンスを使用しています
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+## リリースノート
 
-- [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+### 0.0.1
 
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-- Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-- Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-- Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-- [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-- [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+初期開発リリース:
+- 基本的なインライン補完機能
+- Ollama API統合
+- モデルとパラメータの設定可能化
+- デバウンスと重複検出機能
