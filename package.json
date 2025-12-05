@@ -1,0 +1,84 @@
+{
+  "name": "local-llm-code-completion",
+  "displayName": "",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.106.1"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "local-llm-code-completion.helloWorld",
+        "title": "Hello World"
+      },
+      {
+        "command": "local-llm-code-completion.testProgress",
+        "title": "Local LLM: Test Progress Notification"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Local LLM Code Completion",
+      "properties": {
+        "localLlmCodeCompletion.apiUrl": {
+          "type": "string",
+          "default": "http://localhost:11434/v1/chat/completions",
+          "description": "Ollama OpenAI-compatible chat completions endpoint."
+        },
+        "localLlmCodeCompletion.model": {
+          "type": "string",
+          "default": "llama3.2:1b",
+          "description": "Ollama model name to use for completion."
+        },
+        "localLlmCodeCompletion.maxTokens": {
+          "type": "number",
+          "default": 96,
+          "description": "Maximum tokens for a single inline completion."
+        },
+        "localLlmCodeCompletion.temperature": {
+          "type": "number",
+          "default": 0.2,
+          "description": "Sampling temperature (0 = deterministic)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run package",
+    "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.106.1",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.27.0",
+    "eslint": "^9.39.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.3"
+  }
+}
